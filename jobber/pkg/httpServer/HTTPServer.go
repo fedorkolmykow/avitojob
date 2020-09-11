@@ -3,6 +3,7 @@ package httpServer
 import (
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -23,6 +24,13 @@ type server struct {
 
 
 func (s *server) HandleChangeBalance(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	UserID, err := strconv.Atoi(vars["user_id"])
+	if err != nil{
+		log.Warn(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Warn(err)
@@ -36,6 +44,7 @@ func (s *server) HandleChangeBalance(w http.ResponseWriter, r *http.Request){
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	req.UserId = UserID
 	resp, err := s.svc.ChangeBalance(req)
 	if err != nil{
 		log.Warn(err)
@@ -57,6 +66,13 @@ func (s *server) HandleChangeBalance(w http.ResponseWriter, r *http.Request){
 }
 
 func (s *server) HandleTransfer(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	UserID, err := strconv.Atoi(vars["user_id"])
+	if err != nil{
+		log.Warn(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Warn(err)
@@ -70,6 +86,7 @@ func (s *server) HandleTransfer(w http.ResponseWriter, r *http.Request){
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	req.UserId = UserID
 	resp, err := s.svc.Transfer(req)
 	if err != nil{
 		log.Warn(err)
@@ -91,6 +108,13 @@ func (s *server) HandleTransfer(w http.ResponseWriter, r *http.Request){
 }
 
 func (s *server) HandleBalanceGet(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	UserID, err := strconv.Atoi(vars["user_id"])
+	if err != nil{
+		log.Warn(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Warn(err)
@@ -104,6 +128,7 @@ func (s *server) HandleBalanceGet(w http.ResponseWriter, r *http.Request){
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	req.UserId = UserID
 	resp, err := s.svc.GetBalance(req)
 	if err != nil{
 		log.Warn(err)
@@ -125,26 +150,22 @@ func (s *server) HandleBalanceGet(w http.ResponseWriter, r *http.Request){
 }
 
 func (s *server) HandleTransactionsGet(w http.ResponseWriter, r *http.Request){
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Warn(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	req := &m.GetTransactionsReq{}
-	err = req.UnmarshalJSON(body)
+	vars := mux.Vars(r)
+	UserID, err := strconv.Atoi(vars["user_id"])
 	if err != nil{
 		log.Warn(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	req := &m.GetTransactionsReq{}
+	req.UserId = UserID
 	resp, err := s.svc.GetTransactions(req)
 	if err != nil{
 		log.Warn(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	body, err = resp.MarshalJSON()
+	body, err := resp.MarshalJSON()
 	if err != nil{
 		log.Warn(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
