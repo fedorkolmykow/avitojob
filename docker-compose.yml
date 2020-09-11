@@ -1,0 +1,18 @@
+version: '3'
+services:
+  server:
+    build: jobber/
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    restart: always
+    environment:
+      - DATABASE_URL=redis:6379
+      - HTTP_PORT=:9000
+      - LOG_LEVEL=FATAL
+    volumes:
+    - ./logs/:/app/server/logs/
+  redis:
+    container_name: redis
+    image: redis
+
