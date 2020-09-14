@@ -1,18 +1,29 @@
-version: '3'
+version: '3.4'
 services:
   server:
     build: jobber/
     ports:
       - "9000:9000"
-      - "9001:9001"
     restart: always
+    depends_on:
+      - postgres
+      - redis
     environment:
-      - DATABASE_URL=redis:6379
+      - REDIS_URL=redis:6379
+      - CASH_EXPIRE=86400
+      - DATABASE_URL=postgresql://postgres:avitopass@composepostgres:5432/avitojob
       - HTTP_PORT=:9000
-      - LOG_LEVEL=FATAL
+      - LOG_LEVEL=TRACE
     volumes:
-    - ./logs/:/app/server/logs/
+    - ./logs/:/root/logs/
   redis:
     container_name: redis
     image: redis
+  postgres:
+    container_name: composepostgres
+    build: postgres/
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - "5555:5432"
 
