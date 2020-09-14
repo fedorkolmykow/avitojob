@@ -2,26 +2,26 @@ package models
 
 type ChangeBalanceReq struct {
 	UserId    int       `json:"user_id"`
-	Change    int       `json:"change"`
+	Change    float64   `json:"change"`
+	Comment   string	`json:"comment"`
+	Source    string    `json:"source"`
 }
 
 type ChangeBalanceResp struct {
 	UserId    int       `json:"user_id"`
-	Change    int       `json:"change"`
-	Message   string	`json:"message"`
+	Balance   float64   `json:"balance"`
 }
 
 type TransferReq struct {
 	UserId    int       `json:"user_id"`
-	Change    int       `json:"change"`
+	Change    float64   `json:"change"`
 	TargetId  int       `json:"target_id"`
+	Comment   string	`json:"comment"`
 }
 
 type TransferResp struct {
-	UserId    int       `json:"user_id"`
-	Change    int       `json:"change"`
-	TargetId  int       `json:"target_id"`
-	Message   string	`json:"message"`
+	Source ChangeBalanceResp	`json:"source"`
+	Target ChangeBalanceResp	`json:"target"`
 }
 
 type GetBalanceReq struct {
@@ -30,7 +30,7 @@ type GetBalanceReq struct {
 
 type GetBalanceResp struct {
 	UserId    int       `json:"user_id"`
-	Balance    int      `json:"balance"`
+	Balance   float64   `json:"balance"`
 }
 
 type GetTransactionsReq struct {
@@ -40,15 +40,23 @@ type GetTransactionsReq struct {
 	TimeSort			bool		`json:"time_sort"`
 }
 
+//type User struct{
+//	UserId    int       `json:"user_id"`
+//	Balance   float64   `json:"balance"`
+//}
+
 type Transaction struct {
-	Change   	int					`json:"change"`
-	ChangeTime 	string				`json:"change_time"`
-	Comment     string				`json:"comment"`
+	UserId          int                 `json:"-" db:"user_id"`
+	InitialBalance  float64				`json:"init_balance" db:"init_balance"`
+	Change   		float64				`json:"change" db:"change"`
+	ChangeTime 		string				`json:"change_time" db:"time"`
+	Source          string              `json:"source" db:"source"`
+	Comment     	string				`json:"comment" db:"comment"`
 }
 
 type GetTransactionsResp struct {
 	UserId    			int         	`json:"user_id"`
-	CurrentBalance    	int         	`json:"current_balance"`
+	CurrentBalance    	float64         `json:"current_balance"`
 	Transactions		[][]Transaction `json:"transactions"`
 }
 

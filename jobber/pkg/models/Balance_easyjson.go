@@ -36,14 +36,10 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels(in *jlexer.Le
 			continue
 		}
 		switch key {
-		case "user_id":
-			out.UserId = int(in.Int())
-		case "change":
-			out.Change = int(in.Int())
-		case "target_id":
-			out.TargetId = int(in.Int())
-		case "message":
-			out.Message = string(in.String())
+		case "source":
+			(out.Source).UnmarshalEasyJSON(in)
+		case "target":
+			(out.Target).UnmarshalEasyJSON(in)
 		default:
 			in.SkipRecursive()
 		}
@@ -59,24 +55,14 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels(out *jwriter.
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"user_id\":"
+		const prefix string = ",\"source\":"
 		out.RawString(prefix[1:])
-		out.Int(int(in.UserId))
+		(in.Source).MarshalEasyJSON(out)
 	}
 	{
-		const prefix string = ",\"change\":"
+		const prefix string = ",\"target\":"
 		out.RawString(prefix)
-		out.Int(int(in.Change))
-	}
-	{
-		const prefix string = ",\"target_id\":"
-		out.RawString(prefix)
-		out.Int(int(in.TargetId))
-	}
-	{
-		const prefix string = ",\"message\":"
-		out.RawString(prefix)
-		out.String(string(in.Message))
+		(in.Target).MarshalEasyJSON(out)
 	}
 	out.RawByte('}')
 }
@@ -126,9 +112,11 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels1(in *jlexer.L
 		case "user_id":
 			out.UserId = int(in.Int())
 		case "change":
-			out.Change = int(in.Int())
+			out.Change = float64(in.Float64())
 		case "target_id":
 			out.TargetId = int(in.Int())
+		case "comment":
+			out.Comment = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -151,12 +139,17 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels1(out *jwriter
 	{
 		const prefix string = ",\"change\":"
 		out.RawString(prefix)
-		out.Int(int(in.Change))
+		out.Float64(float64(in.Change))
 	}
 	{
 		const prefix string = ",\"target_id\":"
 		out.RawString(prefix)
 		out.Int(int(in.TargetId))
+	}
+	{
+		const prefix string = ",\"comment\":"
+		out.RawString(prefix)
+		out.String(string(in.Comment))
 	}
 	out.RawByte('}')
 }
@@ -203,10 +196,14 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels2(in *jlexer.L
 			continue
 		}
 		switch key {
+		case "init_balance":
+			out.InitialBalance = float64(in.Float64())
 		case "change":
-			out.Change = int(in.Int())
+			out.Change = float64(in.Float64())
 		case "change_time":
 			out.ChangeTime = string(in.String())
+		case "source":
+			out.Source = string(in.String())
 		case "comment":
 			out.Comment = string(in.String())
 		default:
@@ -224,14 +221,29 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels2(out *jwriter
 	first := true
 	_ = first
 	{
+		const prefix string = ",\"init_balance\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Float64(float64(in.InitialBalance))
+	}
+	{
 		const prefix string = ",\"change\":"
-		out.RawString(prefix[1:])
-		out.Int(int(in.Change))
+		out.RawString(prefix)
+		out.Float64(float64(in.Change))
 	}
 	{
 		const prefix string = ",\"change_time\":"
 		out.RawString(prefix)
 		out.String(string(in.ChangeTime))
+	}
+	{
+		const prefix string = ",\"source\":"
+		out.RawString(prefix)
+		out.String(string(in.Source))
 	}
 	{
 		const prefix string = ",\"comment\":"
@@ -286,7 +298,7 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels3(in *jlexer.L
 		case "user_id":
 			out.UserId = int(in.Int())
 		case "current_balance":
-			out.CurrentBalance = int(in.Int())
+			out.CurrentBalance = float64(in.Float64())
 		case "transactions":
 			if in.IsNull() {
 				in.Skip()
@@ -311,7 +323,7 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels3(in *jlexer.L
 						in.Delim('[')
 						if v1 == nil {
 							if !in.IsDelim(']') {
-								v1 = make([]Transaction, 0, 1)
+								v1 = make([]Transaction, 0, 0)
 							} else {
 								v1 = []Transaction{}
 							}
@@ -353,7 +365,7 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels3(out *jwriter
 	{
 		const prefix string = ",\"current_balance\":"
 		out.RawString(prefix)
-		out.Int(int(in.CurrentBalance))
+		out.Float64(float64(in.CurrentBalance))
 	}
 	{
 		const prefix string = ",\"transactions\":"
@@ -517,7 +529,7 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels5(in *jlexer.L
 		case "user_id":
 			out.UserId = int(in.Int())
 		case "balance":
-			out.Balance = int(in.Int())
+			out.Balance = float64(in.Float64())
 		default:
 			in.SkipRecursive()
 		}
@@ -540,7 +552,7 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels5(out *jwriter
 	{
 		const prefix string = ",\"balance\":"
 		out.RawString(prefix)
-		out.Int(int(in.Balance))
+		out.Float64(float64(in.Balance))
 	}
 	out.RawByte('}')
 }
@@ -655,10 +667,8 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels7(in *jlexer.L
 		switch key {
 		case "user_id":
 			out.UserId = int(in.Int())
-		case "change":
-			out.Change = int(in.Int())
-		case "message":
-			out.Message = string(in.String())
+		case "balance":
+			out.Balance = float64(in.Float64())
 		default:
 			in.SkipRecursive()
 		}
@@ -679,14 +689,9 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels7(out *jwriter
 		out.Int(int(in.UserId))
 	}
 	{
-		const prefix string = ",\"change\":"
+		const prefix string = ",\"balance\":"
 		out.RawString(prefix)
-		out.Int(int(in.Change))
-	}
-	{
-		const prefix string = ",\"message\":"
-		out.RawString(prefix)
-		out.String(string(in.Message))
+		out.Float64(float64(in.Balance))
 	}
 	out.RawByte('}')
 }
@@ -736,7 +741,11 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels8(in *jlexer.L
 		case "user_id":
 			out.UserId = int(in.Int())
 		case "change":
-			out.Change = int(in.Int())
+			out.Change = float64(in.Float64())
+		case "comment":
+			out.Comment = string(in.String())
+		case "source":
+			out.Source = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -759,7 +768,17 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels8(out *jwriter
 	{
 		const prefix string = ",\"change\":"
 		out.RawString(prefix)
-		out.Int(int(in.Change))
+		out.Float64(float64(in.Change))
+	}
+	{
+		const prefix string = ",\"comment\":"
+		out.RawString(prefix)
+		out.String(string(in.Comment))
+	}
+	{
+		const prefix string = ",\"source\":"
+		out.RawString(prefix)
+		out.String(string(in.Source))
 	}
 	out.RawByte('}')
 }
