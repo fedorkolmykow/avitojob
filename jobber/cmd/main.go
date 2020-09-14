@@ -1,13 +1,14 @@
 package main
 
 import (
+	"github.com/fedorkolmykow/avitojob/pkg/httpServer"
+	"github.com/fedorkolmykow/avitojob/pkg/postgres"
+	"github.com/fedorkolmykow/avitojob/pkg/redis"
+	"github.com/fedorkolmykow/avitojob/pkg/service"
 	"net/http"
 	"os"
 
 	log "github.com/sirupsen/logrus"
-
-	"github.com/fedorkolmykow/avitojob/pkg/httpServer"
-	"github.com/fedorkolmykow/avitojob/pkg/redis"
 )
 
 
@@ -24,7 +25,7 @@ func main() {
 	if err != nil {
 		log.Warn(err)
 	}
-	file, err := os.OpenFile("logs/kiddy.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	file, err := os.OpenFile("logs/jobber.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err == nil {
 		log.SetOutput(file)
 	} else {
@@ -32,15 +33,16 @@ func main() {
 	}
 
 	redCon := redis.NewDb()
+    dbCon := postgres.NewDbClient()
+    swc := service.NewService(dbCon, redCon)
+	serverHTTP := httpServer.NewHTTPServer(swc)
 
-	serverHTTP := httpServer.NewHTTPServer(redCon)
 
-
-	go func() {
+	//go func() {
 		log.Trace("starting HTTP server at", os.Getenv("HTTP_PORT"))
-		err := http.ListenAndServe(os.Getenv("HTTP_PORT"), serverHTTP)
+		err = http.ListenAndServe(os.Getenv("HTTP_PORT"), serverHTTP)
 		if err != nil{
 			log.Fatal(err)
 		}
-	}()
+	//}()
 }
