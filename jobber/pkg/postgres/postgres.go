@@ -220,6 +220,7 @@ func (d *dbClient) SelectBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, 
 	var exists bool
 	Resp = &m.GetBalanceResp{UserId: Req.UserId}
 	tx, err := d.db.Beginx()
+	log.Trace("start transaction with data: " + fmt.Sprintf("%#v", Req))
 	if err != nil{
 		log.Warn(err)
 		return
