@@ -1,6 +1,7 @@
 package httpServer
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -13,7 +14,7 @@ import (
 
 type service interface {
 	ChangeBalance(Req *m.ChangeBalanceReq) (Resp *m.ChangeBalanceResp, err error)
-	Transfer(Req *m.TransferReq) (Resp *m.GetTransactionsResp, err error)
+	Transfer(Req *m.TransferReq) (Resp *m.TransferResp, err error)
 	GetBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err error)
 	GetTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransactionsResp, err error)
 }
@@ -45,6 +46,7 @@ func (s *server) HandleChangeBalance(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	req.UserId = UserID
+	log.Trace("Received data: " + fmt.Sprintf("%+v", req))
 	resp, err := s.svc.ChangeBalance(req)
 	if err != nil{
 		log.Warn(err)
@@ -87,6 +89,7 @@ func (s *server) HandleTransfer(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	req.UserId = UserID
+	log.Trace("Received data: " + fmt.Sprintf("%+v", req))
 	resp, err := s.svc.Transfer(req)
 	if err != nil{
 		log.Warn(err)
@@ -115,27 +118,16 @@ func (s *server) HandleBalanceGet(w http.ResponseWriter, r *http.Request){
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Warn(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
 	req := &m.GetBalanceReq{}
-	err = req.UnmarshalJSON(body)
-	if err != nil{
-		log.Warn(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
 	req.UserId = UserID
+	log.Trace("Received data: " + fmt.Sprintf("%+v", req))
 	resp, err := s.svc.GetBalance(req)
 	if err != nil{
 		log.Warn(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	body, err = resp.MarshalJSON()
+	body, err := resp.MarshalJSON()
 	if err != nil{
 		log.Warn(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -157,15 +149,28 @@ func (s *server) HandleTransactionsGet(w http.ResponseWriter, r *http.Request){
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Warn(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	req := &m.GetTransactionsReq{}
+	err = req.UnmarshalJSON(body)
+	if err != nil{
+		log.Warn(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	req.UserId = UserID
+	log.Trace("Received data: " + fmt.Sprintf("%+v", req))
 	resp, err := s.svc.GetTransactions(req)
 	if err != nil{
 		log.Warn(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	body, err := resp.MarshalJSON()
+	body, err = resp.MarshalJSON()
 	if err != nil{
 		log.Warn(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
