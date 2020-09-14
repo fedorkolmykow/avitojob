@@ -25,7 +25,7 @@ func (d *db) Get(key interface{}) (value string, err error){
 	if err != nil {
 		return
 	} else if value == "" {
-		err = errors.New("empty key")
+		err = errors.New("empty value")
 		return
 	}
 	return
