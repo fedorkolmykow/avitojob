@@ -38,8 +38,9 @@ func (d *db) Set(key string, value string) (err error){
 	if err != nil {
 		return
 	}
-	//untilMorrow := time.Until()
-	_, err = conn.Do("EXPIRE", key, 3600)
+	y, m, day := time.Now().Date()
+	untilMorrow := time.Until(time.Date(y, m, day+1, 0,0,0,0, time.Local))
+	_, err = conn.Do("EXPIRE", key, untilMorrow.Seconds())
 	if err != nil {
 		return
 	}
