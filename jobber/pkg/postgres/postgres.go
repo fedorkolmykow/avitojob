@@ -27,7 +27,7 @@ type DbClient interface{
 	UpdateBalance(Req *m.ChangeBalanceReq) (Resp *m.ChangeBalanceResp, err error)
 	UpdateBalances(Req *m.TransferReq) (Resp *m.TransferResp, err error)
 	SelectBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err error)
-	SelectTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransactionsResp, err error)
+	SelectTransactions(Req *m.GetTransactionsReq) (Resp *m.Transactions, err error)
 }
 
 type dbClient struct{
