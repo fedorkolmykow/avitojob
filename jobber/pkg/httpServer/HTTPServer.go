@@ -120,6 +120,7 @@ func (s *server) HandleBalanceGet(w http.ResponseWriter, r *http.Request){
 	}
 	req := &m.GetBalanceReq{}
 	req.UserId = UserID
+	req.Currency = r.FormValue("currency")
 	log.Trace("Received data: " + fmt.Sprintf("%+v", req))
 	resp, err := s.svc.GetBalance(req)
 	if err != nil{

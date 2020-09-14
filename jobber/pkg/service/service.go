@@ -2,12 +2,14 @@ package service
 
 import (
 	"errors"
-	"math"
-	"sort"
-	"strconv"
-
 	m "github.com/fedorkolmykow/avitojob/pkg/models"
 	log "github.com/sirupsen/logrus"
+	"io/ioutil"
+	"math"
+	"net/http"
+	"os"
+	"sort"
+	"strconv"
 )
 
 type Service interface {
@@ -25,9 +27,9 @@ type dbClient interface{
 }
 
 type cashClient interface{
-	Get(key interface{}) (value string, err error)
-	Set(key interface{}, value string) (err error)
-	Delete(key interface{}) (err error)
+	Get(key string) (value string, err error)
+	Set(key string, value string) (err error)
+	Delete(key string) (err error)
 }
 
 type service struct{
@@ -36,11 +38,6 @@ type service struct{
 }
 
 func (s *service) ChangeBalance(Req *m.ChangeBalanceReq) (Resp *m.ChangeBalanceResp, err error) {
-	id := strconv.Itoa(Req.UserId)
-	err = s.cash.Delete("user:" + id + ":balance")
-	if err!= nil{
-		log.Trace(err)
-	}
 	Resp, err = s.db.UpdateBalance(Req)
 	return
 }
@@ -55,29 +52,56 @@ func (s *service) Transfer(Req *m.TransferReq) (Resp *m.TransferResp, err error)
 }
 
 func (s *service) GetBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err error) {
-	Resp, err = s.getCashedBalance(Req)
-	if err != nil{
-		log.Warn(err)
-	} else{
-		log.Trace("Get balance from cash")
-		return
-	}
 	Resp, err = s.db.SelectBalance(Req)
-	return
-}
-
-func (s *service) getCashedBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err error){
-	id := strconv.Itoa(Req.UserId)
-	balance, err := s.cash.Get("user:" + id + ":balance")
-	if err != nil{
-		return
-	}
-	Resp = &m.GetBalanceResp{}
-	Resp.Balance, err = strconv.ParseFloat(balance, 64)
 	if err != nil {
+		log.Warn(err)
 		return
 	}
-	Resp.UserId, err = strconv.Atoi(balance)
+	if Req.Currency != ""{
+		var strRate string
+		strRate, err = s.cash.Get("Rate:0:" + Req.Currency)
+		if err == nil{
+			var fltRate float64
+			fltRate, err = strconv.ParseFloat(strRate, 64)
+			if err == nil {
+				Resp.Currency = Req.Currency
+				Resp.Balance = Resp.Balance * fltRate
+				log.Trace("read rate from cash")
+				return
+			}
+			log.Trace(err)
+		} else{
+			log.Trace(err)
+		}
+		var r *http.Response
+		var body []byte
+		r, err = http.Get(os.Getenv("CURRENCY_URL")+Req.Currency)
+		if err != nil {
+			log.Warn(err)
+			return
+		}
+		body, err = ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Warn(err)
+			return
+		}
+		rate := &m.Rate{}
+		err = rate.UnmarshalJSON(body)
+		if err != nil {
+			log.Warn(err)
+			return
+		}
+		strRate = strconv.FormatFloat(rate.Rates[Req.Currency], 'e', -1, 64)
+		err = s.cash.Set("Rate:0:" + Req.Currency, strRate)
+		if err != nil {
+			log.Warn(err)
+			return
+		}
+		Resp.Currency = Req.Currency
+		Resp.Balance = Resp.Balance * rate.Rates[Req.Currency]
+	} else{
+		Resp.Currency = "RUB"
+	}
 	return
 }
 

@@ -390,7 +390,117 @@ func (v *Transaction) UnmarshalJSON(data []byte) error {
 func (v *Transaction) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels3(l, v)
 }
-func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels4(in *jlexer.Lexer, out *GetTransactionsResp) {
+func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels4(in *jlexer.Lexer, out *Rate) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "rates":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				in.Delim('{')
+				out.Rates = make(map[string]float64)
+				for !in.IsDelim('}') {
+					key := string(in.String())
+					in.WantColon()
+					var v4 float64
+					v4 = float64(in.Float64())
+					(out.Rates)[key] = v4
+					in.WantComma()
+				}
+				in.Delim('}')
+			}
+		case "base":
+			out.Base = string(in.String())
+		case "date":
+			out.Date = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels4(out *jwriter.Writer, in Rate) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"rates\":"
+		out.RawString(prefix[1:])
+		if in.Rates == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
+			out.RawString(`null`)
+		} else {
+			out.RawByte('{')
+			v5First := true
+			for v5Name, v5Value := range in.Rates {
+				if v5First {
+					v5First = false
+				} else {
+					out.RawByte(',')
+				}
+				out.String(string(v5Name))
+				out.RawByte(':')
+				out.Float64(float64(v5Value))
+			}
+			out.RawByte('}')
+		}
+	}
+	{
+		const prefix string = ",\"base\":"
+		out.RawString(prefix)
+		out.String(string(in.Base))
+	}
+	{
+		const prefix string = ",\"date\":"
+		out.RawString(prefix)
+		out.String(string(in.Date))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v Rate) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels4(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v Rate) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels4(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *Rate) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels4(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *Rate) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels4(l, v)
+}
+func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels5(in *jlexer.Lexer, out *GetTransactionsResp) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -427,9 +537,9 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels4(in *jlexer.L
 					out.Transactions = (out.Transactions)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v4 Transaction
-					(v4).UnmarshalEasyJSON(in)
-					out.Transactions = append(out.Transactions, v4)
+					var v6 Transaction
+					(v6).UnmarshalEasyJSON(in)
+					out.Transactions = append(out.Transactions, v6)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -444,7 +554,7 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels4(in *jlexer.L
 		in.Consumed()
 	}
 }
-func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels4(out *jwriter.Writer, in GetTransactionsResp) {
+func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels5(out *jwriter.Writer, in GetTransactionsResp) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -460,11 +570,11 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels4(out *jwriter
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v5, v6 := range in.Transactions {
-				if v5 > 0 {
+			for v7, v8 := range in.Transactions {
+				if v7 > 0 {
 					out.RawByte(',')
 				}
-				(v6).MarshalEasyJSON(out)
+				(v8).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -475,27 +585,27 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels4(out *jwriter
 // MarshalJSON supports json.Marshaler interface
 func (v GetTransactionsResp) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels4(&w, v)
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels5(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v GetTransactionsResp) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels4(w, v)
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels5(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *GetTransactionsResp) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels4(&r, v)
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels5(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *GetTransactionsResp) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels4(l, v)
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels5(l, v)
 }
-func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels5(in *jlexer.Lexer, out *GetTransactionsReq) {
+func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels6(in *jlexer.Lexer, out *GetTransactionsReq) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -534,7 +644,7 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels5(in *jlexer.L
 		in.Consumed()
 	}
 }
-func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels5(out *jwriter.Writer, in GetTransactionsReq) {
+func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels6(out *jwriter.Writer, in GetTransactionsReq) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -569,27 +679,27 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels5(out *jwriter
 // MarshalJSON supports json.Marshaler interface
 func (v GetTransactionsReq) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels5(&w, v)
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels6(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v GetTransactionsReq) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels5(w, v)
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels6(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *GetTransactionsReq) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels5(&r, v)
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels6(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *GetTransactionsReq) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels5(l, v)
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels6(l, v)
 }
-func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels6(in *jlexer.Lexer, out *GetBalanceResp) {
+func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels7(in *jlexer.Lexer, out *GetBalanceResp) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -612,6 +722,8 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels6(in *jlexer.L
 			out.UserId = int(in.Int())
 		case "balance":
 			out.Balance = float64(in.Float64())
+		case "currency":
+			out.Currency = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -622,7 +734,7 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels6(in *jlexer.L
 		in.Consumed()
 	}
 }
-func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels6(out *jwriter.Writer, in GetBalanceResp) {
+func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels7(out *jwriter.Writer, in GetBalanceResp) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -636,33 +748,38 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels6(out *jwriter
 		out.RawString(prefix)
 		out.Float64(float64(in.Balance))
 	}
+	{
+		const prefix string = ",\"currency\":"
+		out.RawString(prefix)
+		out.String(string(in.Currency))
+	}
 	out.RawByte('}')
 }
 
 // MarshalJSON supports json.Marshaler interface
 func (v GetBalanceResp) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels6(&w, v)
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels7(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v GetBalanceResp) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels6(w, v)
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels7(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *GetBalanceResp) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels6(&r, v)
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels7(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *GetBalanceResp) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels6(l, v)
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels7(l, v)
 }
-func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels7(in *jlexer.Lexer, out *GetBalanceReq) {
+func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels8(in *jlexer.Lexer, out *GetBalanceReq) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -683,6 +800,8 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels7(in *jlexer.L
 		switch key {
 		case "user_id":
 			out.UserId = int(in.Int())
+		case "Currency":
+			out.Currency = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -693,7 +812,7 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels7(in *jlexer.L
 		in.Consumed()
 	}
 }
-func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels7(out *jwriter.Writer, in GetBalanceReq) {
+func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels8(out *jwriter.Writer, in GetBalanceReq) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -702,33 +821,38 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels7(out *jwriter
 		out.RawString(prefix[1:])
 		out.Int(int(in.UserId))
 	}
+	{
+		const prefix string = ",\"Currency\":"
+		out.RawString(prefix)
+		out.String(string(in.Currency))
+	}
 	out.RawByte('}')
 }
 
 // MarshalJSON supports json.Marshaler interface
 func (v GetBalanceReq) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels7(&w, v)
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels8(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v GetBalanceReq) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels7(w, v)
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels8(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *GetBalanceReq) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels7(&r, v)
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels8(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *GetBalanceReq) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels7(l, v)
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels8(l, v)
 }
-func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels8(in *jlexer.Lexer, out *ChangeBalanceResp) {
+func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels9(in *jlexer.Lexer, out *ChangeBalanceResp) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -761,7 +885,7 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels8(in *jlexer.L
 		in.Consumed()
 	}
 }
-func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels8(out *jwriter.Writer, in ChangeBalanceResp) {
+func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels9(out *jwriter.Writer, in ChangeBalanceResp) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -781,27 +905,27 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels8(out *jwriter
 // MarshalJSON supports json.Marshaler interface
 func (v ChangeBalanceResp) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels8(&w, v)
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels9(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ChangeBalanceResp) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels8(w, v)
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels9(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ChangeBalanceResp) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels8(&r, v)
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels9(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ChangeBalanceResp) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels8(l, v)
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels9(l, v)
 }
-func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels9(in *jlexer.Lexer, out *ChangeBalanceReq) {
+func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels10(in *jlexer.Lexer, out *ChangeBalanceReq) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -838,7 +962,7 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels9(in *jlexer.L
 		in.Consumed()
 	}
 }
-func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels9(out *jwriter.Writer, in ChangeBalanceReq) {
+func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels10(out *jwriter.Writer, in ChangeBalanceReq) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -868,23 +992,23 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels9(out *jwriter
 // MarshalJSON supports json.Marshaler interface
 func (v ChangeBalanceReq) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels9(&w, v)
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels10(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ChangeBalanceReq) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels9(w, v)
+	easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels10(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ChangeBalanceReq) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels9(&r, v)
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels10(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ChangeBalanceReq) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels9(l, v)
+	easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels10(l, v)
 }

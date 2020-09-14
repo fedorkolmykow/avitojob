@@ -9,16 +9,16 @@ import (
 )
 
 type DbClient interface {
-    Get(key interface{}) (value string, err error)
-    Set(key interface{}, value string) (err error)
-    Delete(key interface{}) (err error)
+    Get(key string) (value string, err error)
+    Set(key string, value string) (err error)
+    Delete(key string) (err error)
 }
 
 type db struct {
 	pool *redis.Pool
 }
 
-func (d *db) Get(key interface{}) (value string, err error){
+func (d *db) Get(key string) (value string, err error){
 	conn := d.pool.Get()
 	defer conn.Close()
 	value, err = redis.String(conn.Do("GET", key))
@@ -31,21 +31,22 @@ func (d *db) Get(key interface{}) (value string, err error){
 	return
 }
 
-func (d *db) Set(key interface{}, value string) (err error){
+func (d *db) Set(key string, value string) (err error){
 	conn := d.pool.Get()
 	defer conn.Close()
 	_, err = conn.Do("SET", key, value)
 	if err != nil {
 		return
 	}
-	_, err = conn.Do("EXPIRE", key, os.Getenv("CASH_EXPIRE"))
+	//untilMorrow := time.Until()
+	_, err = conn.Do("EXPIRE", key, 3600)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func (d *db) Delete(key interface{}) (err error){
+func (d *db) Delete(key string) (err error){
 	conn := d.pool.Get()
 	defer conn.Close()
 	_, err = conn.Do("DEL", key)

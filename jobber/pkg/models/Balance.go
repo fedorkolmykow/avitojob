@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type ChangeBalanceReq struct {
 	UserId    int       `json:"user_id"`
@@ -28,11 +30,19 @@ type TransferResp struct {
 
 type GetBalanceReq struct {
 	UserId    int       `json:"user_id"`
+	Currency  string
 }
 
 type GetBalanceResp struct {
 	UserId    int       `json:"user_id"`
 	Balance   float64   `json:"balance"`
+	Currency  string	`json:"currency"`
+}
+
+type Rate struct{
+	Rates     map[string]float64	`json:"rates"`
+	Base      string				`json:"base"`
+	Date      string				`json:"date"`
 }
 
 type GetTransactionsReq struct {

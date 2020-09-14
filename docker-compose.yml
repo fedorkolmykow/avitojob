@@ -10,10 +10,10 @@ services:
       - redis
     environment:
       - REDIS_URL=redis:6379
-      - CASH_EXPIRE=86400
       - DATABASE_URL=postgresql://postgres:avitopass@composepostgres:5432/avitojob
       - HTTP_PORT=:9000
       - LOG_LEVEL=TRACE
+      - CURRENCY_URL=https://api.exchangeratesapi.io/latest?base=RUB&symbols=
     volumes:
     - ./logs/:/root/logs/
   redis:
