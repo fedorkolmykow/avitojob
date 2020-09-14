@@ -21,7 +21,7 @@ curl -d '{"change":200,"comment":"My First","target_id":2}' -H "Content-Type: ap
 Получение баланса пользователя.
 
 `
-curl http://localhost:9000/users/1/balance
+curl http://localhost:9000/users/1/balance?currency=USD
 `
 
 Получение списка транзакций пользователя. change_sort - сортировка по изменению баланса, change_time - сортировка по времени совершения транзакции.
