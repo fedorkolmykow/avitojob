@@ -242,7 +242,7 @@ func (d *dbClient) SelectBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, 
 	}
 	return
 }
-func (d *dbClient) SelectTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransactionsResp, err error){
+func (d *dbClient) SelectTransactions(Req *m.GetTransactionsReq) (Resp *m.Transactions, err error){
 	return
 }
 
