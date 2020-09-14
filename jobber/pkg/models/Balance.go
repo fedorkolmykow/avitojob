@@ -37,6 +37,7 @@ type GetBalanceResp struct {
 
 type GetTransactionsReq struct {
 	UserId    			int         `json:"user_id"`
+	Page				int			`json:"page"`
 	TransactionsOnPage 	int		    `json:"transactions_on_page"`
 	ChangeSort			bool		`json:"change_sort"`
 	TimeSort			bool		`json:"time_sort"`
@@ -65,7 +66,7 @@ type Transactions struct{
 type GetTransactionsResp struct {
 	UserId    			int         	`json:"user_id"`
 	CurrentBalance    	float64         `json:"current_balance"`
-	Transactions		[][]Transaction `json:"transactions"`
+	Transactions		[]Transaction   `json:"transactions"`
 }
 
 
