@@ -9,22 +9,22 @@ import (
 
 type Service interface {
 	ChangeBalance(Req *m.ChangeBalanceReq) (Resp *m.ChangeBalanceResp, err error)
-	Transfer(Req *m.TransferReq) (Resp *m.GetTransactionsResp, err error)
+	Transfer(Req *m.TransferReq) (Resp *m.TransferResp, err error)
 	GetBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err error)
 	GetTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransactionsResp, err error)
 }
 
 type dbClient interface{
 	UpdateBalance(Req *m.ChangeBalanceReq) (Resp *m.ChangeBalanceResp, err error)
-	UpdateBalances(Req *m.TransferReq) (Resp *m.GetTransactionsResp, err error)
+	UpdateBalances(Req *m.TransferReq) (Resp *m.TransferResp, err error)
 	SelectBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err error)
 	SelectTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransactionsResp, err error)
 }
 
 type cashClient interface{
-	Get(key string) (value string, err error)
-	Set(key string, value string) (err error)
-	Delete(key string) (err error)
+	Get(key interface{}) (value string, err error)
+	Set(key interface{}, value string) (err error)
+	Delete(key interface{}) (err error)
 }
 
 type service struct{
@@ -42,7 +42,7 @@ func (s *service) ChangeBalance(Req *m.ChangeBalanceReq) (Resp *m.ChangeBalanceR
 	return
 }
 
-func (s *service) Transfer(Req *m.TransferReq) (Resp *m.GetTransactionsResp, err error) {
+func (s *service) Transfer(Req *m.TransferReq) (Resp *m.TransferResp, err error) {
 	idSource := strconv.Itoa(Req.UserId)
 	idTarget := strconv.Itoa(Req.TargetId)
 	err = s.cash.Delete("user:" + idSource + ":balance")
@@ -76,7 +76,7 @@ func (s *service) getCashedBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp
 		return
 	}
 	Resp = &m.GetBalanceResp{}
-	Resp.Balance, err = strconv.Atoi(balance)
+	Resp.Balance, err = strconv.ParseFloat(balance, 64)
 	if err != nil {
 		return
 	}
@@ -85,6 +85,20 @@ func (s *service) getCashedBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp
 }
 
 func (s *service) GetTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransactionsResp, err error) {
+	id := strconv.Itoa(Req.UserId)
+	body, err := s.cash.Get("user:" + id + ":transactions")
+	if err != nil{
+		log.Trace(err)
+	} else{
+		Resp = &m.GetTransactionsResp{}
+		err = Resp.UnmarshalJSON([]byte(body))
+		if err != nil{
+			log.Trace(err)
+		} else{
+			return
+		}
+	}
+
 	return
 }
 
