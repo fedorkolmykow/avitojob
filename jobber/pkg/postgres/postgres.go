@@ -21,6 +21,7 @@ const(
 	SetIsolationSerializable = `SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;`
 	InsertTrans = `INSERT INTO Transactions (user_id, init_balance, change, time, comment)  
                      VALUES (:user_id, :init_balance, :change, :time, :comment);`
+	SelectTransactions = `SELECT * FROM Transactions WHERE user_id=$1;`
 )
 
 type DbClient interface{
@@ -244,6 +245,17 @@ func (d *dbClient) SelectBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, 
 	return
 }
 func (d *dbClient) SelectTransactions(Req *m.GetTransactionsReq) (Resp *m.Transactions, err error){
+	Resp = &m.Transactions{
+		Transactions: []m.Transaction{},
+		ChangeSort:   Req.ChangeSort,
+		TimeSort:     Req.TimeSort,
+	}
+    err = d.db.Select(&Resp.Transactions, SelectTransactions, Req.UserId)
+    if err != nil{
+    	log.Warn(err)
+    	return
+	}
+	log.Trace(Resp)
 	return
 }
 

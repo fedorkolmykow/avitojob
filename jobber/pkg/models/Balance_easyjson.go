@@ -308,6 +308,8 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels3(in *jlexer.L
 			continue
 		}
 		switch key {
+		case "trans_id":
+			out.TransId = int(in.Int())
 		case "init_balance":
 			out.InitialBalance = float64(in.Float64())
 		case "change":
@@ -333,13 +335,13 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels3(out *jwriter
 	first := true
 	_ = first
 	{
+		const prefix string = ",\"trans_id\":"
+		out.RawString(prefix[1:])
+		out.Int(int(in.TransId))
+	}
+	{
 		const prefix string = ",\"init_balance\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Float64(float64(in.InitialBalance))
 	}
 	{
@@ -409,8 +411,6 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels4(in *jlexer.L
 		switch key {
 		case "user_id":
 			out.UserId = int(in.Int())
-		case "current_balance":
-			out.CurrentBalance = float64(in.Float64())
 		case "transactions":
 			if in.IsNull() {
 				in.Skip()
@@ -452,11 +452,6 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels4(out *jwriter
 		const prefix string = ",\"user_id\":"
 		out.RawString(prefix[1:])
 		out.Int(int(in.UserId))
-	}
-	{
-		const prefix string = ",\"current_balance\":"
-		out.RawString(prefix)
-		out.Float64(float64(in.CurrentBalance))
 	}
 	{
 		const prefix string = ",\"transactions\":"
@@ -523,7 +518,7 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels5(in *jlexer.L
 			out.UserId = int(in.Int())
 		case "page":
 			out.Page = int(in.Int())
-		case "transactions_on_page":
+		case "per_page":
 			out.TransactionsOnPage = int(in.Int())
 		case "change_sort":
 			out.ChangeSort = bool(in.Bool())
@@ -554,7 +549,7 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels5(out *jwriter
 		out.Int(int(in.Page))
 	}
 	{
-		const prefix string = ",\"transactions_on_page\":"
+		const prefix string = ",\"per_page\":"
 		out.RawString(prefix)
 		out.Int(int(in.TransactionsOnPage))
 	}

@@ -194,6 +194,6 @@ func NewHTTPServer(svc service) (httpServer *mux.Router) {
 	router.HandleFunc("/users/{user_id:[0-9]+}/balance", s.HandleBalanceGet).
 		Methods("GET")
 	router.HandleFunc("/users/{user_id:[0-9]+}/transactions", s.HandleTransactionsGet).
-		Methods("GET")
+		Methods("POST")
 	return router
 }

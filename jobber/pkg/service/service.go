@@ -46,15 +46,9 @@ func (s *service) ChangeBalance(Req *m.ChangeBalanceReq) (Resp *m.ChangeBalanceR
 }
 
 func (s *service) Transfer(Req *m.TransferReq) (Resp *m.TransferResp, err error) {
-	idSource := strconv.Itoa(Req.UserId)
-	idTarget := strconv.Itoa(Req.TargetId)
-	err = s.cash.Delete("user:" + idSource + ":balance")
-	if err!= nil{
-		log.Trace(err)
-	}
-	err = s.cash.Delete("user:" + idTarget + ":balance")
-	if err!= nil{
-		log.Trace(err)
+	if Req.Change < 0{
+		err = errors.New("transfer cannot be negative")
+		return
 	}
 	Resp, err = s.db.UpdateBalances(Req)
 	return
@@ -88,7 +82,6 @@ func (s *service) getCashedBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp
 }
 
 func (s *service) GetTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransactionsResp, err error) {
-
 	if Req.Page < 0 {
 		err = errors.New("negative page")
 	}
@@ -96,6 +89,7 @@ func (s *service) GetTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransac
 		err = errors.New("negative number of transactions on page")
 	}
 	Resp = &m.GetTransactionsResp{}
+	log.Trace(Resp)
 	trs, err := s.db.SelectTransactions(Req)
 	if err != nil{
 		log.Warn(err)
@@ -103,10 +97,7 @@ func (s *service) GetTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransac
 	}
 	sort.Sort(trs)
 	Resp.Transactions = pagination(trs.Transactions, Req.Page, Req.TransactionsOnPage)
-	if err != nil{
-		log.Warn(err)
-		return
-	}
+	Resp.UserId = Req.UserId
 	return
 }
 

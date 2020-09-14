@@ -38,7 +38,7 @@ type GetBalanceResp struct {
 type GetTransactionsReq struct {
 	UserId    			int         `json:"user_id"`
 	Page				int			`json:"page"`
-	TransactionsOnPage 	int		    `json:"transactions_on_page"`
+	TransactionsOnPage 	int		    `json:"per_page"`
 	ChangeSort			bool		`json:"change_sort"`
 	TimeSort			bool		`json:"time_sort"`
 }
@@ -49,6 +49,7 @@ type GetTransactionsReq struct {
 //}
 
 type Transaction struct {
+	TransId			int					`json:"trans_id" db:"trans_id"`
 	UserId          int                 `json:"-" db:"user_id"`
 	InitialBalance  float64				`json:"init_balance" db:"init_balance"`
 	Change   		float64				`json:"change" db:"change"`
@@ -65,7 +66,6 @@ type Transactions struct{
 
 type GetTransactionsResp struct {
 	UserId    			int         	`json:"user_id"`
-	CurrentBalance    	float64         `json:"current_balance"`
 	Transactions		[]Transaction   `json:"transactions"`
 }
 
