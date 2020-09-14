@@ -1,6 +1,9 @@
 package service
 
 import (
+	"errors"
+	"math"
+	"sort"
 	"strconv"
 
 	m "github.com/fedorkolmykow/avitojob/pkg/models"
@@ -60,7 +63,7 @@ func (s *service) Transfer(Req *m.TransferReq) (Resp *m.TransferResp, err error)
 func (s *service) GetBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err error) {
 	Resp, err = s.getCashedBalance(Req)
 	if err != nil{
-		log.Trace(err)
+		log.Warn(err)
 	} else{
 		log.Trace("Get balance from cash")
 		return
@@ -85,20 +88,42 @@ func (s *service) getCashedBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp
 }
 
 func (s *service) GetTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransactionsResp, err error) {
-	id := strconv.Itoa(Req.UserId)
-	body, err := s.cash.Get("user:" + id + ":transactions")
-	if err != nil{
-		log.Trace(err)
-	} else{
-		Resp = &m.GetTransactionsResp{}
-		err = Resp.UnmarshalJSON([]byte(body))
-		if err != nil{
-			log.Trace(err)
-		} else{
-			return
-		}
-	}
 
+	if Req.Page < 0 {
+		err = errors.New("negative page")
+	}
+	if Req.TransactionsOnPage < 0 {
+		err = errors.New("negative number of transactions on page")
+	}
+	Resp = &m.GetTransactionsResp{}
+	trs, err := s.db.SelectTransactions(Req)
+	if err != nil{
+		log.Warn(err)
+		return
+	}
+	sort.Sort(trs)
+	Resp.Transactions = pagination(trs.Transactions, Req.Page, Req.TransactionsOnPage)
+	if err != nil{
+		log.Warn(err)
+		return
+	}
+	return
+}
+
+func pagination(trs []m.Transaction, page int, perPage int) (tr []m.Transaction){
+
+	firsT := (page - 1) * perPage
+	if firsT > len(trs){		//if page index too big then show last page
+		pagesCount := math.Ceil(float64(len(trs))/float64(perPage))
+		firsT = (int(pagesCount) - 1) * perPage
+	}
+	if len(trs) - perPage < firsT{
+		perPage = len(trs)%perPage
+	}
+	tr = make([]m.Transaction, perPage)
+	for i := 0; i < perPage; i++{
+		tr[i] = trs[firsT + i]
+	}
 	return
 }
 
