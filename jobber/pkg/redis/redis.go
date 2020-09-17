@@ -12,6 +12,7 @@ type DbClient interface {
     Get(key string) (value string, err error)
     Set(key string, value string) (err error)
     Delete(key string) (err error)
+	Shutdown() error
 }
 
 type db struct {
@@ -55,6 +56,10 @@ func (d *db) Delete(key string) (err error){
 		return
 	}
 	return
+}
+
+func (d *db) Shutdown() error{
+	return d.pool.Close()
 }
 
 // NewDb returns a new Db instance.

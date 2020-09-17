@@ -29,6 +29,7 @@ type DbClient interface{
 	UpdateBalances(Req *m.TransferReq) (Resp *m.TransferResp, err error)
 	SelectBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err error)
 	SelectTransactions(Req *m.GetTransactionsReq) (Resp *m.Transactions, err error)
+	Shutdown() error
 }
 
 type dbClient struct{
@@ -248,6 +249,10 @@ func (d *dbClient) SelectTransactions(Req *m.GetTransactionsReq) (Resp *m.Transa
 	return
 }
 
+func (d *dbClient) Shutdown() error{
+	return d.db.Close()
+}
+
 func NewDbClient() DbClient{
 	db, err := sqlx.Connect("pgx", os.Getenv("DATABASE_URL"))
 	if err != nil {
@@ -255,7 +260,5 @@ func NewDbClient() DbClient{
 	}
 	//db.SetMaxIdleConns(n int)
 	//db.SetMaxOpenConns(n int)
-
-
 	return &dbClient{db: db}
 }
