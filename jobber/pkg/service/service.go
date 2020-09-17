@@ -103,9 +103,11 @@ func (s *service) GetBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err 
 func (s *service) GetTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransactionsResp, err error) {
 	if Req.Page < 0 {
 		err = errors.New("negative page")
+		return
 	}
 	if Req.TransactionsOnPage < 0 {
 		err = errors.New("negative number of transactions on page")
+		return
 	}
 	Resp = &m.GetTransactionsResp{}
 	log.Trace(Resp)
