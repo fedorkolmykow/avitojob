@@ -1,12 +1,17 @@
 package main
 
 import (
+	"context"
 	"github.com/fedorkolmykow/avitojob/pkg/httpServer"
 	"github.com/fedorkolmykow/avitojob/pkg/postgres"
 	"github.com/fedorkolmykow/avitojob/pkg/redis"
 	"github.com/fedorkolmykow/avitojob/pkg/service"
 	"net/http"
 	"os"
+	"os/signal"
+	"strconv"
+	"syscall"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -35,14 +40,41 @@ func main() {
 	redCon := redis.NewDb()
     dbCon := postgres.NewDbClient()
     swc := service.NewService(dbCon, redCon)
-	serverHTTP := httpServer.NewHTTPServer(swc)
+	router := httpServer.NewHTTPServer(swc)
+	srv := &http.Server{
+		Addr:    os.Getenv("HTTP_PORT"),
+		Handler: router,
+	}
 
+	go func() {
 
-	//go func() {
 		log.Trace("starting HTTP server at", os.Getenv("HTTP_PORT"))
-		err = http.ListenAndServe(os.Getenv("HTTP_PORT"), serverHTTP)
-		if err != nil{
-			log.Fatal(err)
+		err = srv.ListenAndServe()
+		if err != nil && err != http.ErrServerClosed{
+			log.Warn(err)
 		}
-	//}()
+	}()
+
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	<-done
+
+	wait, err := strconv.Atoi(os.Getenv("TIME_TO_SHUTDOWN"))
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(wait)*time.Second)
+	defer func(){
+		e := redCon.Shutdown()
+		if e != nil{
+			log.Warn(e)
+		}
+		e = dbCon.Shutdown()
+		if e != nil{
+			log.Warn(e)
+		}
+		cancel()
+	}()
+	err = srv.Shutdown(ctx)
+	if err != nil{
+		log.Fatalf("Graceful Server Shutdown Failed:%+v", err)
+	}
+	log.Trace("Server Was Gracefully Stopped")
 }
