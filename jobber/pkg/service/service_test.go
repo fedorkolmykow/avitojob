@@ -6,10 +6,6 @@ import (
 	"testing"
 )
 
-func testDummy(){
-
-}
-
 func TestPaginationSuccess(t *testing.T){
 	perPage := 3
 	page := 1

@@ -23,7 +23,6 @@ type server struct {
 	svc service
 }
 
-
 func (s *server) HandleChangeBalance(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	UserID, err := strconv.Atoi(vars["user_id"])

@@ -30,7 +30,7 @@ type TransferResp struct {
 
 type GetBalanceReq struct {
 	UserId    int       `json:"user_id"`
-	Currency  string
+	Currency  string	`json:"currency"`
 }
 
 type GetBalanceResp struct {
@@ -52,11 +52,6 @@ type GetTransactionsReq struct {
 	ChangeSort			bool		`json:"change_sort"`
 	TimeSort			bool		`json:"time_sort"`
 }
-
-//type User struct{
-//	UserId    int       `json:"user_id"`
-//	Balance   float64   `json:"balance"`
-//}
 
 type Transaction struct {
 	TransId			int					`json:"trans_id" db:"trans_id"`
