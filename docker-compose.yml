@@ -14,8 +14,11 @@ services:
       - HTTP_PORT=:9000
       - LOG_LEVEL=TRACE
       - CURRENCY_URL=https://api.exchangeratesapi.io/latest?base=RUB&symbols=
+      - TIME_TO_SHUTDOWN=10
     volumes:
     - ./logs/:/root/logs/
+    stop_signal: SIGINT
+    stop_grace_period: 15s
   redis:
     container_name: redis
     image: redis
