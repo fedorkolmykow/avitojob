@@ -19,8 +19,8 @@ const(
 	InsertUser = `INSERT INTO Users (user_id, balance) VALUES ($1, $2) RETURNING user_id;`
 	UpdateUserBalance = `UPDATE Users SET balance = balance + $1 WHERE user_id = $2 RETURNING balance;`
 	SetIsolationSerializable = `SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;`
-	InsertTrans = `INSERT INTO Transactions (user_id, init_balance, change, time, comment)  
-                     VALUES (:user_id, :init_balance, :change, :time, :comment);`
+	InsertTrans = `INSERT INTO Transactions (user_id, init_balance, change, time, comment, source)  
+                     VALUES (:user_id, :init_balance, :change, :time, :comment, :source);`
 	SelectTransactions = `SELECT * FROM Transactions WHERE user_id=$1;`
 )
 
@@ -59,7 +59,6 @@ func createNewUser(tx *sqlx.Tx, tr *m.Transaction) (exists bool, err error){
 	}
 	if !exists{
 		if tr.Change < 0{
-			_ = rollAndErr(tx, err)
 			err = errors.New("negative initial balance")
 			return
 		}
@@ -76,18 +75,15 @@ func createNewUser(tx *sqlx.Tx, tr *m.Transaction) (exists bool, err error){
 
 func changeBalance(tx *sqlx.Tx, tr *m.Transaction) (balance float64 ,err error){
 	if tr.InitialBalance + tr.Change < 0{
-		_ = rollAndErr(tx, err)
 		err = errors.New("negative balance")
 		return
 	}
 	err = tx.QueryRow(UpdateUserBalance, tr.Change, tr.UserId).Scan(&balance)
 	if err != nil{
-		err = rollAndErr(tx, err)
 		return
 	}
 	err = insertTransaction(tx, tr)
 	if err != nil{
-		err = rollAndErr(tx, err)
 		return
 	}
 	return
