@@ -44,10 +44,8 @@ func insertTransaction(tx *sqlx.Tx, trans *m.Transaction) error {
 
 func rollAndErr(tx *sqlx.Tx, err error) error{
 	log.Trace("Rollback")
-	log.Warn(err)
 	errRoll := tx.Rollback()
 	if errRoll != nil{
-		log.Warn(errRoll)
 		return errRoll
 	}
 	return err
@@ -107,12 +105,10 @@ func (d *dbClient) UpdateBalance(Req *m.ChangeBalanceReq) (Resp *m.ChangeBalance
 	}
 	tx, err := d.db.Beginx()
 	if err != nil{
-		log.Warn(err)
 		return
 	}
 	_, err = tx.Exec(SetIsolationSerializable)
 	if err != nil{
-		log.Warn(err)
 		return
 	}
 	log.Trace("start transaction with data: " + fmt.Sprintf("%#v", Req))
@@ -135,7 +131,6 @@ func (d *dbClient) UpdateBalance(Req *m.ChangeBalanceReq) (Resp *m.ChangeBalance
 	}
 	err = tx.Commit()
 	if err != nil{
-		log.Warn(err)
 		return
 	}
 	log.Trace("changed balance, result: " + fmt.Sprintf("%#v", Resp))
@@ -162,12 +157,10 @@ func (d *dbClient) UpdateBalances(Req *m.TransferReq) (Resp *m.TransferResp, err
 	}
 	tx, err := d.db.Beginx()
 	if err != nil{
-		log.Warn(err)
 		return
 	}
 	_, err = tx.Exec(SetIsolationSerializable)
 	if err != nil{
-		log.Warn(err)
 		return
 	}
 	log.Trace("start transaction with data: " + fmt.Sprintf("%#v", Req))
@@ -211,7 +204,6 @@ func (d *dbClient) UpdateBalances(Req *m.TransferReq) (Resp *m.TransferResp, err
 	}
 	err = tx.Commit()
 	if err != nil{
-		log.Warn(err)
 		return
 	}
 	log.Trace("changed balances, result: " + fmt.Sprintf("%#v", Resp))
@@ -223,7 +215,6 @@ func (d *dbClient) SelectBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, 
 	tx, err := d.db.Beginx()
 	log.Trace("start transaction with data: " + fmt.Sprintf("%#v", Req))
 	if err != nil{
-		log.Warn(err)
 		return
 	}
 	err = tx.QueryRow(CheckExistence, Req.UserId).Scan(&exists)
@@ -239,7 +230,6 @@ func (d *dbClient) SelectBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, 
 	}
 	err = tx.Commit()
 	if err != nil{
-		log.Warn(err)
 		return
 	}
 	return
@@ -252,7 +242,6 @@ func (d *dbClient) SelectTransactions(Req *m.GetTransactionsReq) (Resp *m.Transa
 	}
     err = d.db.Select(&Resp.Transactions, SelectTransactions, Req.UserId)
     if err != nil{
-    	log.Warn(err)
     	return
 	}
 	log.Trace(Resp)

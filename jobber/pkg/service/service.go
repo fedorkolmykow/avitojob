@@ -54,7 +54,6 @@ func (s *service) Transfer(Req *m.TransferReq) (Resp *m.TransferResp, err error)
 func (s *service) GetBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err error) {
 	Resp, err = s.db.SelectBalance(Req)
 	if err != nil {
-		log.Warn(err)
 		return
 	}
 	if Req.Currency != ""{
@@ -77,24 +76,20 @@ func (s *service) GetBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err 
 		var body []byte
 		r, err = http.Get(os.Getenv("CURRENCY_URL")+Req.Currency)
 		if err != nil {
-			log.Warn(err)
 			return
 		}
 		body, err = ioutil.ReadAll(r.Body)
 		if err != nil {
-			log.Warn(err)
 			return
 		}
 		rate := &m.Rate{}
 		err = rate.UnmarshalJSON(body)
 		if err != nil {
-			log.Warn(err)
 			return
 		}
 		strRate = strconv.FormatFloat(rate.Rates[Req.Currency], 'e', -1, 64)
 		err = s.cash.Set("Rate:0:" + Req.Currency, strRate)
 		if err != nil {
-			log.Warn(err)
 			return
 		}
 		Resp.Currency = Req.Currency
@@ -116,7 +111,6 @@ func (s *service) GetTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransac
 	log.Trace(Resp)
 	trs, err := s.db.SelectTransactions(Req)
 	if err != nil{
-		log.Warn(err)
 		return
 	}
 	sort.Sort(trs)
