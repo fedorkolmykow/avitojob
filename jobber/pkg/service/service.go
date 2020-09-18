@@ -64,43 +64,13 @@ func (s *service) GetBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err 
 		return
 	}
 	if Req.Currency != ""{
-		var strRate string
-		strRate, err = s.cash.Get("Rate:0:" + Req.Currency)
-		if err == nil{
-			var fltRate float64
-			fltRate, err = strconv.ParseFloat(strRate, 64)
-			if err == nil {
-				Resp.Currency = Req.Currency
-				Resp.Balance = Resp.Balance * fltRate
-				log.Trace("read rate from cash")
-				return
-			}
-			log.Trace(err)
-		} else{
-			log.Trace(err)
-		}
-		var r *http.Response
-		var body []byte
-		r, err = http.Get(os.Getenv("CURRENCY_URL")+Req.Currency)
-		if err != nil {
-			return
-		}
-		body, err = ioutil.ReadAll(r.Body)
-		if err != nil {
-			return
-		}
-		rate := &m.Rate{}
-		err = rate.UnmarshalJSON(body)
-		if err != nil {
-			return
-		}
-		strRate = strconv.FormatFloat(rate.Rates[Req.Currency], 'e', -1, 64)
-		err = s.cash.Set("Rate:0:" + Req.Currency, strRate)
-		if err != nil {
+		var rate float64
+		rate, err = getRate(s.cash, Req.Currency)
+		if err != nil{
 			return
 		}
 		Resp.Currency = Req.Currency
-		Resp.Balance = Resp.Balance * rate.Rates[Req.Currency]
+		Resp.Balance = Resp.Balance * rate
 	} else{
 		Resp.Currency = "RUB"
 	}
@@ -138,6 +108,43 @@ func pagination(trs []m.Transaction, page int, perPage int) (tr []m.Transaction)
 	for i := 0; i < perPage; i++{
 		tr[i] = trs[firsT + i]
 	}
+	return
+}
+
+func getRate(cash cashClient, currency string) (rate float64, err error){
+	var strRate string
+	strRate, err = cash.Get("Rate:0:" + currency)
+	if err == nil{
+		rate, err = strconv.ParseFloat(strRate, 64)
+		if err == nil {
+			log.Trace("read rate from cash")
+			return
+		}
+		log.Trace(err)
+	} else{
+		log.Trace(err)
+	}
+	var r *http.Response
+	var body []byte
+	r, err = http.Get(os.Getenv("CURRENCY_URL")+currency)
+	if err != nil {
+		return
+	}
+	body, err = ioutil.ReadAll(r.Body)
+	if err != nil {
+		return
+	}
+	resp := &m.Rate{}
+	err = resp.UnmarshalJSON(body)
+	if err != nil {
+		return
+	}
+	strRate = strconv.FormatFloat(resp.Rates[currency], 'e', -1, 64)
+	err = cash.Set("Rate:0:" + currency, strRate)
+	if err != nil {
+		return
+	}
+	rate = resp.Rates[currency]
 	return
 }
 
