@@ -51,7 +51,7 @@ func main() {
 		log.Trace("starting HTTP server at", os.Getenv("HTTP_PORT"))
 		err = srv.ListenAndServe()
 		if err != nil && err != http.ErrServerClosed{
-			log.Warn(err)
+			log.Fatal(err)
 		}
 	}()
 
