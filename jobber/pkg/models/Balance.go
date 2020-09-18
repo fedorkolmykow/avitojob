@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 )
 
@@ -93,4 +94,41 @@ func (t Transactions) Swap(i, j int) {
 
 func (t Transactions) Len() int {
 	return len(t.Transactions)
+}
+
+func (c *ChangeBalanceReq) Validate() error{
+	if c.UserId < 0 {
+		return errors.New("user id can't be negative")
+	}
+	return nil
+}
+
+func (t *TransferReq) Validate() error{
+	if t.Change < 0{
+		return errors.New("transfer change cannot be negative")
+	}
+	if t.UserId < 0 {
+		return errors.New("user id can't be negative")
+	}
+	return nil
+}
+
+func (g *GetBalanceReq) Validate() error{
+	if g.UserId < 0 {
+		return errors.New("user id can't be negative")
+	}
+	return nil
+}
+
+func (g *GetTransactionsReq) Validate() error {
+	if g.Page < 0 {
+		return errors.New("negative page")
+	}
+	if g.TransactionsOnPage < 0 {
+		return errors.New("negative number of transactions on page")
+	}
+	if g.UserId < 0 {
+		return errors.New("user id can't be negative")
+	}
+	return nil
 }

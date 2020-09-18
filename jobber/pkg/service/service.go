@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	m "github.com/fedorkolmykow/avitojob/pkg/models"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -38,13 +37,17 @@ type service struct{
 }
 
 func (s *service) ChangeBalance(Req *m.ChangeBalanceReq) (Resp *m.ChangeBalanceResp, err error) {
+	err = Req.Validate()
+	if err != nil{
+		return
+	}
 	Resp, err = s.db.UpdateBalance(Req)
 	return
 }
 
 func (s *service) Transfer(Req *m.TransferReq) (Resp *m.TransferResp, err error) {
-	if Req.Change < 0{
-		err = errors.New("transfer cannot be negative")
+	err = Req.Validate()
+	if err != nil{
 		return
 	}
 	Resp, err = s.db.UpdateBalances(Req)
@@ -52,6 +55,10 @@ func (s *service) Transfer(Req *m.TransferReq) (Resp *m.TransferResp, err error)
 }
 
 func (s *service) GetBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err error) {
+	err = Req.Validate()
+	if err != nil{
+		return
+	}
 	Resp, err = s.db.SelectBalance(Req)
 	if err != nil {
 		return
@@ -101,12 +108,8 @@ func (s *service) GetBalance(Req *m.GetBalanceReq) (Resp *m.GetBalanceResp, err 
 }
 
 func (s *service) GetTransactions(Req *m.GetTransactionsReq) (Resp *m.GetTransactionsResp, err error) {
-	if Req.Page < 0 {
-		err = errors.New("negative page")
-		return
-	}
-	if Req.TransactionsOnPage < 0 {
-		err = errors.New("negative number of transactions on page")
+	err = Req.Validate()
+	if err != nil{
 		return
 	}
 	Resp = &m.GetTransactionsResp{}
