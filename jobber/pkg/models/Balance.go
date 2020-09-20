@@ -55,7 +55,7 @@ type GetTransactionsReq struct {
 }
 
 type Transaction struct {
-	TransId			int					`json:"trans_id" db:"trans_id"`
+	TransId			int					`json:"-" db:"trans_id"`
 	UserId          int                 `json:"-" db:"user_id"`
 	InitialBalance  float64				`json:"init_balance" db:"init_balance"`
 	Change   		float64				`json:"change" db:"change"`

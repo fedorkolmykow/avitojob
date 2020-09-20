@@ -308,8 +308,6 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels3(in *jlexer.L
 			continue
 		}
 		switch key {
-		case "trans_id":
-			out.TransId = int(in.Int())
 		case "init_balance":
 			out.InitialBalance = float64(in.Float64())
 		case "change":
@@ -335,13 +333,13 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels3(out *jwriter
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"trans_id\":"
-		out.RawString(prefix[1:])
-		out.Int(int(in.TransId))
-	}
-	{
 		const prefix string = ",\"init_balance\":"
-		out.RawString(prefix)
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.Float64(float64(in.InitialBalance))
 	}
 	{
@@ -800,7 +798,7 @@ func easyjson45d5b42eDecodeGithubComFedorkolmykowAvitojobPkgModels8(in *jlexer.L
 		switch key {
 		case "user_id":
 			out.UserId = int(in.Int())
-		case "Currency":
+		case "currency":
 			out.Currency = string(in.String())
 		default:
 			in.SkipRecursive()
@@ -822,7 +820,7 @@ func easyjson45d5b42eEncodeGithubComFedorkolmykowAvitojobPkgModels8(out *jwriter
 		out.Int(int(in.UserId))
 	}
 	{
-		const prefix string = ",\"Currency\":"
+		const prefix string = ",\"currency\":"
 		out.RawString(prefix)
 		out.String(string(in.Currency))
 	}

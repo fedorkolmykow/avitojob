@@ -136,7 +136,7 @@ func TestHandles(t *testing.T){
 		{
 			Vars:        map[string]string{"user_id":"0"},
 			Req:          []byte(`{"page":1,"per_page":1,"change_sort":false,"time_sort":false}`),
-			Resp:         `{"user_id":0,"transactions":[{"trans_id":0,"init_balance":0,"change":100,"change_time":"Now","source":"Sberbank","comment":"Test"}]}`,
+			Resp:         `{"user_id":0,"transactions":[{"init_balance":0,"change":100,"change_time":"Now","source":"Sberbank","comment":"Test"}]}`,
 			Status:       http.StatusOK,
 			S:            server{svc: &correctService{}},
 			Handle:       getTransactions,
