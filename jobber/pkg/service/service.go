@@ -1,14 +1,17 @@
 package service
 
 import (
-	m "github.com/fedorkolmykow/avitojob/pkg/models"
-	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"math"
 	"net/http"
 	"os"
 	"sort"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
+
+	m "github.com/fedorkolmykow/avitojob/pkg/models"
+
 )
 
 type Service interface {
