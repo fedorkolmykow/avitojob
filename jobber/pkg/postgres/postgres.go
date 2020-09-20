@@ -138,7 +138,7 @@ func (d *dbClient) UpdateBalances(Req *m.TransferReq) (Resp *m.TransferResp, err
 	var exists bool
 	Resp = &m.TransferResp{
 		Source: m.ChangeBalanceResp{UserId: Req.UserId},
-		Target: m.ChangeBalanceResp{UserId: Req.TargetId},
+		Target: m.ChangeBalanceResp{UserId: Req.TargetId, Balance: Req.Change},
 	}
 	sourceTrans := &m.Transaction{
 		Change: -Req.Change,
