@@ -2,16 +2,17 @@ package main
 
 import (
 	"context"
-	"github.com/fedorkolmykow/avitojob/pkg/httpServer"
-	"github.com/fedorkolmykow/avitojob/pkg/postgres"
-	"github.com/fedorkolmykow/avitojob/pkg/redis"
-	"github.com/fedorkolmykow/avitojob/pkg/service"
 	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
 	"time"
+
+	"github.com/fedorkolmykow/avitojob/pkg/httpServer"
+	"github.com/fedorkolmykow/avitojob/pkg/postgres"
+	"github.com/fedorkolmykow/avitojob/pkg/redis"
+	"github.com/fedorkolmykow/avitojob/pkg/service"
 
 	log "github.com/sirupsen/logrus"
 )
