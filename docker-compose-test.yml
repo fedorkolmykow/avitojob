@@ -1,0 +1,28 @@
+version: '3.4'
+services:
+  server:
+    container_name: testserver
+    build:
+      context: jobber/
+      dockerfile: Dockerfile_test
+    depends_on:
+      - testpostgres
+      - testredis
+    environment:
+      - REDIS_URL=testredis:6379
+      - DATABASE_URL=postgresql://postgres:avitopass@testpostgres:5432/avitojob
+      - HTTP_PORT=:9001
+      - LOG_LEVEL=TRACE
+      - CURRENCY_URL=https://api.exchangeratesapi.io/latest?base=RUB&symbols=
+      - TIME_TO_SHUTDOWN=10
+    stop_signal: SIGINT
+    stop_grace_period: 15s
+  testredis:
+    image: redis
+    logging:
+      driver: none
+  testpostgres:
+    build: postgres/
+    logging:
+      driver: none
+
