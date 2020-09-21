@@ -126,6 +126,7 @@ func getRate(cash cashClient, currency string) (rate float64, err error){
 		log.Trace(err)
 	} else{
 		log.Trace(err)
+		err = nil
 	}
 	var r *http.Response
 	var body []byte
