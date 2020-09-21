@@ -1,10 +1,22 @@
 #Тестовое задание Авито в юнит Job
 
-Запуск:
+Запуск сервиса:
 
 `
-docker-compose up
+make run
 `
+
+Запуск юнит тестов:
+
+`make unit_tests`
+
+Запуск интеграционных тестов:
+
+`make integration_tests`
+
+Остановить сервис:
+
+`make stop`
 
 Изменение баланаса пользователя. Отрицательное значение параметра change снимает средства.
 
@@ -29,10 +41,4 @@ Page - номер страницы, per_page - количество транза
 
 `
 curl -d '{"page":1,"per_page":3,"change_sort":false,"time_sort":true}' -H "Content-Type: application/json" -X POST http://localhost:9000/users/1/transactions
-`
-
-Запустить интеграционный тест:
-
-`
-docker-compose -f docker-compose-test.yml up -V --build
 `
