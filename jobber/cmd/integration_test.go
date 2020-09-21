@@ -37,7 +37,7 @@ func start(t *testing.T) *http.Server{
 			t.Fatal(err)
 		}
 	}()
-	time.Sleep(time.Duration(2 * time.Second))
+	time.Sleep(time.Second) //it is time for server to start
 	return srv
 }
 
