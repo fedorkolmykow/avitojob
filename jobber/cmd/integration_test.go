@@ -5,15 +5,20 @@ package main
 import (
 	"bytes"
 	"context"
-	"github.com/fedorkolmykow/avitojob/pkg/httpServer"
-	"github.com/fedorkolmykow/avitojob/pkg/postgres"
-	"github.com/fedorkolmykow/avitojob/pkg/redis"
-	"github.com/fedorkolmykow/avitojob/pkg/service"
-	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"testing"
+	"time"
+
+	log "github.com/sirupsen/logrus"
+	"bou.ke/monkey"
+
+	"github.com/fedorkolmykow/avitojob/pkg/httpServer"
+	"github.com/fedorkolmykow/avitojob/pkg/postgres"
+	"github.com/fedorkolmykow/avitojob/pkg/redis"
+	"github.com/fedorkolmykow/avitojob/pkg/service"
+
 )
 
 func start(t *testing.T) *http.Server{
